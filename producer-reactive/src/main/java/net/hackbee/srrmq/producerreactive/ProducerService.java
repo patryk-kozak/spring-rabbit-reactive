@@ -1,5 +1,6 @@
 package net.hackbee.srrmq.producerreactive;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -8,9 +9,16 @@ import reactor.core.publisher.Flux;
 @Service
 public class ProducerService {
 
-  Flux<LoadPacket> send(Integer num) {
+  @Autowired
+  private RabbitReactiveTemplate rabbitReactiveTemplate;
+
+  Flux<LoadPacketStatus> send(Integer num) {
     return Flux.range(0, num)
-        .map(id -> new LoadPacket());
+        .map(id ->
+            rabbitReactiveTemplate.process(LoadPacket.builder()
+                .id(id.longValue())
+                .data("data#" + id)
+                .build()));
   }
 
 }

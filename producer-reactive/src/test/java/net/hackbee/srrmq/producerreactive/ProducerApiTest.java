@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DisplayName("Producer API Test should")
 class ProducerApiTest {
 
   @LocalServerPort
@@ -44,7 +45,7 @@ class ProducerApiTest {
 
   @Test
   @DisplayName(
-      "There should be a 'produce' HttpMethod.GET endpoint"
+      "have a 'produce' HttpMethod.GET endpoint"
   )
   void shouldHavePostEndpointProduce() {
     webTestClient.get().uri("/produce").exchange().expectStatus().is2xxSuccessful();
@@ -52,7 +53,7 @@ class ProducerApiTest {
 
   @Test
   @DisplayName(
-      "Should call ProducerService on 'produce' endpoint"
+      "call ProducerService on 'produce' endpoint"
   )
   void shouldCallProducerService() {
     webTestClient.get().uri("/produce").exchange().expectStatus().is2xxSuccessful();
@@ -61,7 +62,7 @@ class ProducerApiTest {
 
   @Test
   @DisplayName(
-      "Should generate number and pass it to ProducerService"
+      "generate number and pass it to ProducerService"
   )
   void generateRandomNumAndPassToService() {
     webTestClient.get().uri("/produce").exchange().expectStatus().is2xxSuccessful();
@@ -71,7 +72,7 @@ class ProducerApiTest {
 
   @Test
   @DisplayName(
-      "Should return Flux of LoadPacket class"
+      "return Flux of LoadPacket class"
   )
   void returnFluxWithLoadPacket() {
     Flux<LoadPacket> result = webTestClient.get().uri("/produce").exchange()
@@ -88,7 +89,7 @@ class ProducerApiTest {
 
   @Test
   @DisplayName(
-      "Number of packets should be positive"
+      "return positive number of packets"
   )
   void dontReturnNegativeNumbers() {
     Flux<LoadPacket> result = webTestClient.get().uri("/produce").exchange()
