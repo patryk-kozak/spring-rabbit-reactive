@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -31,7 +31,16 @@ class ProducerServiceTest {
   @BeforeEach
   void each() {
     MockitoAnnotations.initMocks(this);
-    doCallRealMethod().when(rabbitReactiveTemplate).process(any(LoadPacket.class));
+    doReturn(
+        Flux.just(LoadPacketStatus.builder()
+            .loadPacket(
+                LoadPacket.builder()
+                    .id(1L)
+                    .data("data")
+                    .build()
+            )
+            .build())
+    ).when(rabbitReactiveTemplate).process(any(LoadPacket.class));
   }
 
   @Test

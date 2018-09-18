@@ -15,14 +15,13 @@ public class RabbitReactiveTemplate {
   private RabbitTemplate rabbitTemplate;
 
   Flux<LoadPacketStatus> process(LoadPacket packet) {
-    rabbitTemplate.convertAndSend("", "",
-        LoadPacketStatus.builder()
-            .loadPacket(packet)
-            .isSuccess(true)
-            .sendTime(ZonedDateTime.now())
-            .build()
-    );
-    return Flux.just();
+    LoadPacketStatus toSend = LoadPacketStatus.builder()
+        .loadPacket(packet)
+        .isSuccess(true)
+        .sendTime(ZonedDateTime.now())
+        .build();
+    rabbitTemplate.convertAndSend("", "", toSend);
+    return Flux.just(toSend);
   }
 
 }
