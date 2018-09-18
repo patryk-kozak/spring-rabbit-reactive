@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -30,7 +31,7 @@ class ProducerServiceTest {
   @BeforeEach
   void each() {
     MockitoAnnotations.initMocks(this);
-    producerService = new ProducerService();
+    doCallRealMethod().when(rabbitReactiveTemplate).process(any(LoadPacket.class));
   }
 
   @Test
@@ -54,10 +55,10 @@ class ProducerServiceTest {
       "create each LoadPacket with id and payload"
   )
   void shouldCreateLoadPacketWithData() {
-    List<LoadPacket> result = producerService.send(3).collectList().block();
+    List<LoadPacketStatus> result = producerService.send(3).collectList().block();
     result.forEach(packet -> {
-      assertThat(packet.getId()).isNotNull();
-      assertThat(packet.getData()).isNotNull();
+      assertThat(packet.getLoadPacket().getId()).isNotNull();
+      assertThat(packet.getLoadPacket().getData()).isNotNull();
     });
   }
 
@@ -66,7 +67,7 @@ class ProducerServiceTest {
       "send LoadPacket to RabbitMQ with RabbitReactiveTemplate process() method"
   )
   void shouldSendPacketToRabbit() {
-    Flux<LoadPacket> res = producerService.send(3);
+    List<LoadPacketStatus> res = producerService.send(3).collectList().block();
     verify(rabbitReactiveTemplate, times(3)).process(any(LoadPacket.class));
   }
 }

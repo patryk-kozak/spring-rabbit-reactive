@@ -14,11 +14,12 @@ public class ProducerService {
 
   Flux<LoadPacketStatus> send(Integer num) {
     return Flux.range(0, num)
-        .map(id ->
+        .flatMap(id ->
             rabbitReactiveTemplate.process(LoadPacket.builder()
                 .id(id.longValue())
                 .data("data#" + id)
-                .build()));
+                .build())
+        );
   }
 
 }

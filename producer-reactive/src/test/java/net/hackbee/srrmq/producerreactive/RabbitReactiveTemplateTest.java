@@ -11,8 +11,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @DisplayName("RabbitReactiveTemplate should")
@@ -34,9 +38,19 @@ class RabbitReactiveTemplateTest {
       "extend LoadPacket with information about time send packet"
   )
   void processMethodPresent() {
-    Mono<LoadPacketStatus> result =
+    Flux<LoadPacketStatus> result =
         rabbitReactiveTemplate.process(new LoadPacket(1L, "data#1"));
-    assertThat(result.block().getSendTime()).isNotNull();
+    assertThat(result.collectList().block().get(0).getSendTime()).isNotNull();
+  }
+
+  @Test
+  @DisplayName(
+      "invoke rabbitTemplate same amount of time as process()"
+  )
+  void wrapperSameTimeInvokedAsImplementation() {
+    Flux<LoadPacketStatus> result =
+        rabbitReactiveTemplate.process(new LoadPacket(1L, "data#1"));
+    verify(rabbitTemplate).convertAndSend(anyString(), anyString(), any(Object.class));
   }
 
   @Test
@@ -44,7 +58,7 @@ class RabbitReactiveTemplateTest {
       "mark as success when send succesfully"
   )
   void markSuccessWhenSendComplete() {
-
+    throw new NotImplementedException();
   }
 
   @Test
@@ -52,7 +66,7 @@ class RabbitReactiveTemplateTest {
       "mark as error when send is violated"
   )
   void markErrorIfAnythingElseThenSuccess() {
-
+    throw new NotImplementedException();
   }
 
 }
