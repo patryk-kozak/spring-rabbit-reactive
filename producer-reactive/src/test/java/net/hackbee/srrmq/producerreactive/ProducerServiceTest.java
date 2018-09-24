@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,7 +41,7 @@ class ProducerServiceTest {
                     .build()
             )
             .build())
-    ).when(rabbitReactiveTemplate).process(any(LoadPacket.class));
+    ).when(rabbitReactiveTemplate).convertAndSend(anyString(), anyString(), any(LoadPacket.class));
   }
 
   @Test
@@ -77,6 +78,6 @@ class ProducerServiceTest {
   )
   void shouldSendPacketToRabbit() {
     List<LoadPacketStatus> res = producerService.send(3).collectList().block();
-    verify(rabbitReactiveTemplate, times(3)).process(any(LoadPacket.class));
+    verify(rabbitReactiveTemplate, times(3)).convertAndSend(anyString(), anyString(), any(LoadPacket.class));
   }
 }

@@ -1,27 +1,14 @@
 package net.hackbee.srrmq.producerreactive;
 
-import java.time.ZonedDateTime;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.messaging.Message;
 
 
 import reactor.core.publisher.Flux;
 
-@Component
-public class RabbitReactiveTemplate {
+public interface RabbitReactiveTemplate<T, R> {
 
-  @Autowired
-  private RabbitTemplate rabbitTemplate;
+  Flux<R> convertAndSend(String exchange, String routingKey, T payload);
 
-  Flux<LoadPacketStatus> process(LoadPacket packet) {
-    LoadPacketStatus toSend = LoadPacketStatus.builder()
-        .loadPacket(packet)
-        .isSuccess(true)
-        .sendTime(ZonedDateTime.now())
-        .build();
-    rabbitTemplate.convertAndSend("", "", toSend);
-    return Flux.just(toSend);
-  }
+  Message<R> createMessage(T payload);
 
 }

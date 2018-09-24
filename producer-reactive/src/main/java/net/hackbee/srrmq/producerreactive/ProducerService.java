@@ -15,7 +15,7 @@ public class ProducerService {
   Flux<LoadPacketStatus> send(Integer num) {
     return Flux.range(0, num)
         .flatMap(id ->
-            rabbitReactiveTemplate.process(LoadPacket.builder()
+            rabbitReactiveTemplate.convertAndSend("", "", LoadPacket.builder()
                 .id(id.longValue())
                 .data("data#" + id)
                 .build())
